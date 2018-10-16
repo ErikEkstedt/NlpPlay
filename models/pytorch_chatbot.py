@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
+SOS_token = 0
 
 class EncoderRNN(nn.Module):
     def __init__(self, hidden_size, embedding, n_layers=1, dropout=0):
@@ -148,9 +149,8 @@ class GreedySearchDecoder(nn.Module):
 
 
 class EncoderDecoder(nn.Module):
-
     def __init__(self,
-                 model_name = 'chatbot_model'
+                 model_name = 'chatbot_model',
                  vocab_size=24305,
                  word_vector_dim=128,
                  hidden_size=512,
@@ -168,14 +168,13 @@ class EncoderDecoder(nn.Module):
         self.attn_model = attn_model
         self.dropout = dropout
 
-
         self.embedding = nn.Embedding(vocab_size, word_vector_dim)
         self.encoder = EncoderRNN(hidden_size, self.embedding, encoder_n_layers, dropout)
         self.decoder = LuongAttnDecoderRNN(attn_model, self.embedding,
-                                           hidden_size, voc.num_words,
+                                           hidden_size, vocab_size,
                                            decoder_n_layers, dropout)
 
-    def load_pretrained_embeddings(self, encoder_sd, decoder_sd)
+    def load_pretrained_embeddings(self, encoder_sd, decoder_sd):
         self.encoder.load_state_dict(encoder_sd)
         self.decoder.load_state_dict(decoder_sd)
 
@@ -234,8 +233,8 @@ def train_step(inputs, lengths, targets, mask, max_target_len,
     mask = mask.to(device)
 
     # Forward pass
-    loss, print_losses = self(inputs, lengths, targets, mask,
-                              teacher_forcing_ratio, batch_size, max_target_len)
+    loss, print_losses = model(inputs, lengths, targets, mask,
+                               teacher_forcing_ratio, batch_size, max_target_len)
 
     # Perform backpropatation
     loss.backward()
@@ -250,10 +249,10 @@ def train_step(inputs, lengths, targets, mask, max_target_len,
 
 
 if __name__ == "__main__":
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_name = 'encoder_decoder_model'
-    attn_model = 'dot'
-    #attn_model = 'general'
-    #attn_model = 'concat'
+    attn_model = 'dot' # 'general', 'concat'
     hidden_size = 512
     encoder_n_layers = 2
     decoder_n_layers = 2
@@ -262,7 +261,6 @@ if __name__ == "__main__":
     word_vector_dim = 128
 
     # TODO
-    # This has not been run yet
 
     print('Building encoder and decoder ...')
     model = EncoderDecoder(model_name,
@@ -272,8 +270,9 @@ if __name__ == "__main__":
                            encoder_n_layers,
                            decoder_n_layers,
                            attn_model,
-                           dropout)
-    model.to(device)
+                           dropout).to(device)
 
-    train_step(inputs, lengths, targets, mask, max_target_len,
-               model, model_optimizer, batch_size, clip, max_length)
+
+
+
+

@@ -1,6 +1,7 @@
 numpy
 matplotlib
 tqdm
+tensorboardx
 
 ipython
 jupyter
