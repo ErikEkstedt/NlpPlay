@@ -34,9 +34,10 @@ class EncoderRNN(nn.Module):
 
 # Luong attention layer
 class Attn(torch.nn.Module):
-    def __init__(self, method, hidden_size):
+    def __init__(self, method, hidden_size, batch_first=False):
         super(Attn, self).__init__()
         self.method = method
+        self.batch_first = batch_first
         if self.method not in ['dot', 'general', 'concat']:
             raise ValueError(self.method, "is not an appropriate attention method.")
         self.hidden_size = hidden_size
@@ -260,17 +261,23 @@ if __name__ == "__main__":
     vocab_size = 24305
     word_vector_dim = 128
 
-    # TODO
 
-    print('Building encoder and decoder ...')
-    model = EncoderDecoder(model_name,
-                           vocab_size,
-                           word_vector_dim,
-                           hidden_size,
-                           encoder_n_layers,
-                           decoder_n_layers,
-                           attn_model,
-                           dropout).to(device)
+    # Attention Play
+    vector_size = 10
+
+    attention = Attn(method='dot', hidden_size=vector_size)
+
+    enc_out = torch.ones(10, vector_size)
+    enc_out.shape
+    dec_out = torch.randn(1, 10)
+    dec_out.shape
+
+    # batchify
+    enc_out = enc_out.unsqueeze(0)
+    dec_out = dec_out.unsqueeze(0)
+
+    attention(dec_out, enc_out)
+
 
 
 

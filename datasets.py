@@ -18,7 +18,7 @@ class DialogPairDataset(Dataset):
         self.pad_token = torch.LongTensor([pad_idx])
 
     def __len__(self):
-        return len(pairs)
+        return len(self.pairs)
 
     def decode(self, data):
         if isinstance(data, torch.Tensor):
@@ -32,11 +32,14 @@ class DialogPairDataset(Dataset):
         return [self.vocab.word2index[word] for word in sentence.split(' ')]
 
     def __getitem__(self, idx):
-        pair = pairs[idx]
+        '''lazy reimplementation of trigrams data
+        uses only the first two entries. (missing some data)
+        '''
+        pair = self.pairs[idx]
 
         # Torchify words -> idx -> tensors
-        context = self.indexes_from_sentence(pair[0])
-        response = self.indexes_from_sentence(pair[1])
+        context = self.indexes_from_sentence(pair['pre'])
+        response = self.indexes_from_sentence(pair['current'])
         context = torch.LongTensor(context)
         response = torch.LongTensor(response)
         return context, response
@@ -70,10 +73,10 @@ def pairs_collate_fn(data):
 
     # I like to return dict such that the names and meaning of the data is shown
     # in the training loop.
-    context = {'context_padded': context_padded,
-               'context_lengths': context_lengths}
-    response = {'response_padded': response_padded,
-                'response_lengths': response_lengths}
+    context = {'padded': context_padded,
+               'lengths': context_lengths}
+    response = {'padded': response_padded,
+                'lengths': response_lengths}
     return context, response
 
 
@@ -83,7 +86,7 @@ def get_pairs_dataloader(loadfile='data/dialog/PERSON_mincount_4.pt', **kwargs):
     vocab = Voc('skip_thought')
     vocab.__dict__ = data['vocab_dict']
     dset = DialogPairDataset(trigrams, vocab)
-    return DataLoader(dset, collate_fn=trigrams_collate_fn, **kwargs)
+    return DataLoader(dset, collate_fn=pairs_collate_fn, **kwargs)
 
 
 
