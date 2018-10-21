@@ -21,12 +21,13 @@ from allennlp.data.iterators import BucketIterator
 from allennlp.training.trainer import Trainer
 from allennlp.predictors import SentenceTaggerPredictor
 
+
 torch.manual_seed(1)
+
 
 class PosDatasetReader(DatasetReader):
     """
     DatasetReader for PoS tagging data, one sentence per line, like
-
         The###DET dog###NN ate###V the###DET apple###NN
     """
 
@@ -51,6 +52,7 @@ class PosDatasetReader(DatasetReader):
                 sentence, tags = zip(*(pair.split("###") for pair in pairs))
                 yield self.text_to_instance([Token(word) for word in sentence], tags)
 
+
 class LstmTagger(Model):
     def __init__(self,
                  word_embeddings: TextFieldEmbedder,
@@ -62,7 +64,6 @@ class LstmTagger(Model):
 
         self.hidden2tag = torch.nn.Linear(in_features=encoder.get_output_dim(),
                                           out_features=vocab.get_vocab_size('labels'))
-
         self.accuracy = CategoricalAccuracy()
 
     def forward(self,
@@ -81,48 +82,52 @@ class LstmTagger(Model):
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
         return {"accuracy": self.accuracy.get_metric(reset)}
 
-reader = PosDatasetReader()
 
-train_dataset = reader.read(cached_path(
-    'https://raw.githubusercontent.com/allenai/allennlp'
-    '/master/tutorials/tagger/training.txt'))
-validation_dataset = reader.read(cached_path(
-    'https://raw.githubusercontent.com/allenai/allennlp'
-    '/master/tutorials/tagger/validation.txt'))
+if __name__ == "__main__":
+    reader = PosDatasetReader()
 
-vocab = Vocabulary.from_instances(train_dataset + validation_dataset)
+    # lists of instances. first _read from disk then `text_to_instance`.
+    train_dataset = reader.read(cached_path(
+        'https://raw.githubusercontent.com/allenai/allennlp'
+        '/master/tutorials/tagger/training.txt'))
+    validation_dataset = reader.read(cached_path(
+        'https://raw.githubusercontent.com/allenai/allennlp'
+        '/master/tutorials/tagger/validation.txt'))
 
-EMBEDDING_DIM = 6
-HIDDEN_DIM = 6
+    vocab = Vocabulary.from_instances(train_dataset + validation_dataset)
 
-token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
-                            embedding_dim=EMBEDDING_DIM)
-word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
+    # Model
+    EMBEDDING_DIM = 6
+    HIDDEN_DIM = 6
 
-lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(EMBEDDING_DIM, HIDDEN_DIM, batch_first=True))
+    # embeddings
+    token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'),
+                                embedding_dim=EMBEDDING_DIM)
+    word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
 
-model = LstmTagger(word_embeddings, lstm, vocab)
+    lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(EMBEDDING_DIM, HIDDEN_DIM, batch_first=True))
+    model = LstmTagger(word_embeddings, lstm, vocab) 
+    optimizer = optim.SGD(model.parameters(), lr=0.1)
 
-optimizer = optim.SGD(model.parameters(), lr=0.1)
+    iterator = BucketIterator(batch_size=2, sorting_keys=[("sentence", "num_tokens")])
+    iterator.index_with(vocab)
 
-iterator = BucketIterator(batch_size=2, sorting_keys=[("sentence", "num_tokens")])
+    # Training
+    trainer = Trainer(model=model,
+                      optimizer=optimizer,
+                      iterator=iterator,
+                      train_dataset=train_dataset,
+                      validation_dataset=validation_dataset,
+                      patience=10,
+                      num_epochs=1000)
+    trainer.train()
 
-iterator.index_with(vocab)
+    # Prediction
+    predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
 
-trainer = Trainer(model=model,
-                  optimizer=optimizer,
-                  iterator=iterator,
-                  train_dataset=train_dataset,
-                  validation_dataset=validation_dataset,
-                  patience=10,
-                  num_epochs=1000)
+    sentence = "The dog ate the apple"
+    tag_logits = predictor.predict(sentence)['tag_logits']
+    tag_ids = np.argmax(tag_logits, axis=-1)
 
-trainer.train()
-
-predictor = SentenceTaggerPredictor(model, dataset_reader=reader)
-
-tag_logits = predictor.predict("The dog ate the apple")['tag_logits']
-
-tag_ids = np.argmax(tag_logits, axis=-1)
-
-print([model.vocab.get_token_from_index(i, 'labels') for i in tag_ids])
+    print(sentence)
+    print([model.vocab.get_token_from_index(i, 'labels') for i in tag_ids])

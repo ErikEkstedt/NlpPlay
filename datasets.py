@@ -1,5 +1,4 @@
 import itertools
-
 from vocabulary import Voc
 
 import torch
