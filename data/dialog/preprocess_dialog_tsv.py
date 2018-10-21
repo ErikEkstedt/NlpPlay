@@ -2,6 +2,7 @@ from tqdm import tqdm
 from io import open
 import csv
 
+# Writes dialogs.txt as a tab-value-separated file .tsv
 # Seq2seq reads files where source and target are written on one line with a tab
 # \t in between
 

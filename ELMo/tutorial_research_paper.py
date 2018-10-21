@@ -2,6 +2,7 @@
 Following tutorial:
 https://github.com/allenai/allennlp/blob/master/tutorials/getting_started/predicting_paper_venues/predicting_paper_venues_pt1.md
 '''
+
 from typing import Dict
 import json
 import logging
@@ -100,7 +101,6 @@ class TestSemanticScholarDatasetReader(AllenNlpTestCase):
     def test_read_from_file(self):
         reader = SemanticScholarDatasetReader()
         instances = ensure_list(reader.read('data/open_research_corpus/s2_papers.jsonl'))
-        print(instances)
 
         instance1 = {"title": ["Interferring", "Discourse", "Relations", "in", "Context"],
                      "abstract": ["We", "investigate", "various", "contextual", "effects"],
@@ -126,12 +126,12 @@ class TestSemanticScholarDatasetReader(AllenNlpTestCase):
         assert [t.text for t in fields["title"].tokens] == instance3["title"]
         assert [t.text for t in fields["abstract"].tokens[:5]] == instance3["abstract"]
         assert fields["label"].label == instance3["venue"]
+        print('Test Passed!')
 
 
 # Does the reader pass the tests?
 dataset_reader_test = TestSemanticScholarDatasetReader()
 dataset_reader_test.test_read_from_file()
-
 
 
 # MODEL
