@@ -1,0 +1,23 @@
+#!/bin/bash
+
+SERIALIZATION_DIR="training_log"
+MY_PACKAGE=""
+
+echo "delete $SERIALIZATION_DIR? (y/n)"
+read answer
+if [[ $answer == 'y' || $answer == 'Y'   ]]; then
+  rm -rf $SERIALIZATION_DIR
+  echo "Deleted $SERIALIZATION_DIR..."
+fi
+
+# Glove embedding. Works
+# echo "Loading Glove Seq2Seq"
+# CONFIGURATION="experiments/seq2seq_glove_dialog.json"
+
+# ELMo embedding. Works
+echo "Loading ELMo and Glove Seq2Seq"
+CONFIGURATION="experiments/seq2seq_glove_elmo_dialog.json"
+
+allennlp train \
+  $CONFIGURATION \
+  -s $SERIALIZATION_DIR \

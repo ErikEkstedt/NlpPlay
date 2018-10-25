@@ -1,5 +1,7 @@
 # Custom
-
+train_metric*
+training_log*
+your_output_dir_here*
 .data*
 
 # tex
