@@ -1,3 +1,0 @@
-allennlp
-pytest
-pytest-pythonpath
