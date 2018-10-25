@@ -1,49 +1,109 @@
-# NLP Play
+# NLP with AllenNLP dependency
 
 
+* test
+  - run tests by `pytest` in project-root directory
+* train
+```bash
+allennlp train experiments/alexa_dialog.json \
+  -s training_stats  \
+  --include-package firstProject
 ```
-NlpPlay
-├── README.md
-├── requirements.txt
-├── data
-│   ├── SICK
-│   │   ├── SICK.txt
-│   │   └── readme.txt
-│   ├── beatles
-│   │   └── beatles.txt
-│   ├── coherence
-│   │   └── preprocess.py
-│   ├── cornell_movie
-│   │   ├── data_maxlen_None_trim_4_pairs_189173.pt
-│   │   ├── lines_of_pairs_movie_lines.txt
-│   │   └── preprocess.py
-│   └── dialog
-│       ├── PERSON_mincount_4.pt
-│       ├── README.md
-│       ├── dialog_data_results.ipynb
-│       ├── dialogs.txt
-│       └── preprocess.py
-├── datasets.py
-├── models
-│   ├── coherence.py
-│   ├── pytorch_chatbot.py
-│   └── skip_thought.py
-└── vocabulary.py
+* predict 
+```bash
+allennlp predict experiments/alexa_dialog.json -s training_stats  --include-package firstProject
 ```
 
-## Data
+# ALLENNLP help
 
-Clean Dialog Data
-- [x] Replace named enteties with special token
-- [ ] Replace uncommon words with Part-Of-Speech tags. Perhaps: chihuawa -> <NN> 
+#### allennlp train
+```bash
+positional arguments:
+  param_path            path to parameter file describing the model to be
+                        trained
 
-Pytorch chatbot
-- [x] Reformat PyTorch Chatbot Tutorial data code
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SERIALIZATION_DIR, --serialization-dir SERIALIZATION_DIR
+                        directory in which to save the model and its logs
+  -r, --recover         recover training from the state in serialization_dir
+  -o OVERRIDES, --overrides OVERRIDES
+                        a JSON structure used to override the experiment
+                        configuration
+  --file-friendly-logging
+                        outputs tqdm status on separate lines and slows tqdm
+                        refresh rate
+  --include-package INCLUDE_PACKAGE
+                        additional packages to include
+```
 
-Train some models to get familiarized
-- [ ] Seq2Seq
-- [ ] Seq2Seq with attention
-  - [ ] PyTorch Chatbot Tutorial
-- [ ] Transformer
-- [ ] ELMo
-- [ ] BERT
+
+#### allennlp predict
+```bash
+positional arguments:
+  archive_file          the archived model to make predictions with
+  input_file            path to input file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --output-file OUTPUT_FILE
+                        path to output file
+  --weights-file WEIGHTS_FILE
+                        a path that overrides which weights file to use
+  --batch-size BATCH_SIZE
+                        The batch size to use for processing
+  --silent              do not print output to stdout
+  --cuda-device CUDA_DEVICE
+                        id of GPU to use (if any)
+  --use-dataset-reader  Whether to use the dataset reader of the original
+                        model to load Instances
+  -o OVERRIDES, --overrides OVERRIDES
+                        a JSON structure used to override the experiment
+                        configuration
+  --predictor PREDICTOR
+                        optionally specify a specific predictor to use
+  --include-package INCLUDE_PACKAGE
+                        additional packages to include
+```
+
+#### allennlp 
+
+```bash
+python -m allennlp.service.server_simple \
+    --archive-path tests/fixtures/model.tar.gz \
+    --predictor paper-classifier \
+    --include-package my_library \
+    --title "Academic Paper Classifier" \
+    --field-name title \
+    --field-name paperAbstract
+```
+
+```bash
+Serve up a simple model
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --archive-path ARCHIVE_PATH
+                        path to trained archive file
+  --predictor PREDICTOR
+                        name of predictor
+  --weights-file WEIGHTS_FILE
+                        a path that overrides which weights file to use
+  -o OVERRIDES, --overrides OVERRIDES
+                        a JSON structure used to override the experiment
+                        configuration
+  --static-dir STATIC_DIR
+                        serve index.html from this directory
+  --title TITLE         change the default page title
+  --field-name FIELD_NAME
+                        field names to include in the demo
+  --port PORT           port to serve the demo on
+  --include-package INCLUDE_PACKAGE
+                        additional packages to include
+```
+
+
+
+
+
+

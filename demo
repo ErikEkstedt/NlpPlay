@@ -1,0 +1,12 @@
+#!/bin/bash
+# python -m allennlp.service.server_simple \
+#     --archive-path fixtures/model.tar.gz \
+#     --predictor simple_seq2seq \
+#     --title "Conversation" \
+#     --field-name source
+
+python service/server_simple.py \
+    --archive-path fixtures/model.tar.gz \
+    --predictor simple_seq2seq \
+    --title "Conversation" \
+    --field-name source
