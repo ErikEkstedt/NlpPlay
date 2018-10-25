@@ -1,0 +1,8 @@
+_COMMENTED: {
+  "word_splitter": {
+    "type": "spacy",
+    "pos_tags": true,
+    "parse": true,
+    "ner": true
+  }
+}
