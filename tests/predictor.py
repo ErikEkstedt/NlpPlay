@@ -6,6 +6,7 @@ from allennlp.models.archival import load_archive
 from allennlp.predictors import Predictor
 
 model_path = 'fixtures/model.tar.gz'
+# model_path = 'training_log/model.tar.gz'
 
 archive = load_archive(model_path)
 predictor = Predictor.from_archive(archive, 'simple_seq2seq')
