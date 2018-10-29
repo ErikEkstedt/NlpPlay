@@ -12,12 +12,22 @@ fi
 
 # Glove embedding. Works
 # echo "Loading Glove Seq2Seq"
-# CONFIGURATION="experiments/seq2seq_glove_dialog.json"
+# CONFIGURATION="experiments/dialog/seq2seq_glove_dialog.json"
 
 # ELMo embedding. Works
-echo "Loading ELMo and Glove Seq2Seq"
-CONFIGURATION="experiments/seq2seq_glove_elmo_dialog.json"
+# echo "Loading ELMo and Glove Seq2Seq"
+# CONFIGURATION="experiments/dialog/seq2seq_glove_elmo_dialog.json"
+
+# Test Alexa works
+# echo "Loading Alexa Glove Seq2Seq"
+# CONFIGURATION="experiments/alexa/Alexa_seq2seq_test.json"
+# PACKAGE="datareaders"
+
+echo "Loading Alexa Glove Seq2Seq"
+CONFIGURATION="experiments/alexa/Alexa_seq2seq.json"
+PACKAGE="datareaders"
 
 allennlp train \
   $CONFIGURATION \
+  --include-package $PACKAGE \
   -s $SERIALIZATION_DIR \
