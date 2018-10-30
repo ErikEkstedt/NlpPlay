@@ -85,7 +85,6 @@ elmo_model = hub.Module("https://tfhub.dev/google/elmo/1", trainable=True)
 sess.run(tf.global_variables_initializer())
 sess.run(tf.tables_initializer())
 
-
 def ElmoEmbedding(x):
     return elmo_model(tf.squeeze(tf.cast(x, tf.string)),
                       signature="default", as_dict=True)["default"]

@@ -1,6 +1,5 @@
 # Custom
-train_metric*
-training_log*
+last_training_log/
 your_output_dir_here*
 .data*
 

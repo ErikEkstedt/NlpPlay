@@ -7,7 +7,6 @@ from AlexaAllen.datareaders.AlexaDataReader import AlexaDatasetReader
 class TestAlexaDataReader(AllenNlpTestCase):
     def test_read_from_file(self):
         reader = AlexaDatasetReader()
-
         filepath = '/home/erik/NLP/NlpPlay/data/alexa/test.csv'
         instances = ensure_list(reader.read(filepath))
 
@@ -32,5 +31,6 @@ class TestAlexaDataReader(AllenNlpTestCase):
         # fields = instances[2].fields
         # assert [t.text for t in fields["conversation"].tokens] == instance1["conversation"]
 
-test = TestAlexaDataReader()
-test.test_read_from_file()
+if __name__ == "__main__":
+    test = TestAlexaDataReader()
+    test.test_read_from_file()

@@ -1,31 +1,53 @@
 #!/bin/bash
 
-SERIALIZATION_DIR="training_log"
-MY_PACKAGE=""
+SERIALIZATION_DIR="last_training_log"
+MY_PACKAGE="BotAlexa"
+# MY_PACKAGE="BotDialog"
 
-echo "delete $SERIALIZATION_DIR? (y/n)"
+echo "delete $SERIALIZATION_DIR? (move to /tmp/$SERIALIZATION_DIR)(y/n)"
 read answer
 if [[ $answer == 'y' || $answer == 'Y'   ]]; then
   rm -rf $SERIALIZATION_DIR
+  # mv $SERIALIZATION_DIR /tmp/$SERIALIZATION_DIR
   echo "Deleted $SERIALIZATION_DIR..."
 fi
 
 # Glove embedding. Works
 # echo "Loading Glove Seq2Seq"
 # CONFIGURATION="experiments/dialog/seq2seq_glove_dialog.json"
+# PACKAGE="BotDialog"
+#-----------------------------
 
 # ELMo embedding. Works
 # echo "Loading ELMo and Glove Seq2Seq"
 # CONFIGURATION="experiments/dialog/seq2seq_glove_elmo_dialog.json"
+# PACKAGE="BotDialog"
+#-----------------------------
 
 # Test Alexa works
 # echo "Loading Alexa Glove Seq2Seq"
 # CONFIGURATION="experiments/alexa/Alexa_seq2seq_test.json"
-# PACKAGE="datareaders"
+# PACKAGE="BotDialog"
+#-----------------------------
 
-echo "Loading Alexa Glove Seq2Seq"
-CONFIGURATION="experiments/alexa/Alexa_seq2seq.json"
-PACKAGE="datareaders"
+echo "Loading Alexa TEST elmo"
+CONFIGURATION="BotAlexa/experiments/Alexa_seq2seq_test.json" # Seq2seq + glove + lstm
+PACKAGE="BotAlexa"
+
+# echo "Loading Alexa Elmo Glove Seq2Seq"
+# CONFIGURATION="BotAlexa/experiments/Alexa_seq2seq.json" # Seq2seq + glove + lstm
+# PACKAGE="BotAlexa"
+
+# echo "Loading Alexa Elmo Glove Seq2Seq"
+# CONFIGURATION="BotAlexa/experiments/Alexa_seq2seq_elmo_glove.json"
+# PACKAGE="BotAlexa"
+
+
+# GENERAL
+# Packages=("BotAlexa", "BotDialog")
+# echo "Which --include-package ?"
+# printf '%s\n' "${Packages[@]}"
+
 
 allennlp train \
   $CONFIGURATION \

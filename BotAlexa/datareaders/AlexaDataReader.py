@@ -4,8 +4,8 @@ import logging
 
 from overrides import overrides
 
-from allennlp.common.checks import ConfigurationError
-from allennlp.common.file_utils import cached_path
+# from allennlp.common.checks import ConfigurationError
+# from allennlp.common.file_utils import cached_path
 from allennlp.common.util import START_SYMBOL, END_SYMBOL
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
 from allennlp.data.fields import TextField
@@ -15,7 +15,8 @@ from allennlp.data.token_indexers import TokenIndexer, SingleIdTokenIndexer
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-@DatasetReader.register("Alexa")
+
+@DatasetReader.register("Alexa_datareader")
 class AlexaDatasetReader(DatasetReader):
     def __init__(self,
                  source_tokenizer: Tokenizer = None,
@@ -56,7 +57,11 @@ class AlexaDatasetReader(DatasetReader):
         else:
             return Instance({"source_tokens": source_field})
 
+
 if __name__ == "__main__":
+    """ Programatically try the dataset reader """
+    from allennlp.common.util import ensure_list
+
     reader = AlexaDatasetReader()
     filepath = '/home/erik/NLP/NlpPlay/data/alexa/test.csv'
     instances = ensure_list(reader.read(filepath))
