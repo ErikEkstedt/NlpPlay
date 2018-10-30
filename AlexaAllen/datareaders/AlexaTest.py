@@ -2,7 +2,7 @@
 from allennlp.common.testing import AllenNlpTestCase
 from allennlp.common.util import ensure_list
 
-from datareaders.AlexaDataReader import AlexaDatasetReader
+from AlexaAllen.datareaders.AlexaDataReader import AlexaDatasetReader
 
 class TestAlexaDataReader(AllenNlpTestCase):
     def test_read_from_file(self):

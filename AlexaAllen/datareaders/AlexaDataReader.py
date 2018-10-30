@@ -47,11 +47,14 @@ class AlexaDatasetReader(DatasetReader):
         source_field = TextField(tokenized_source, self._token_indexers)
 
         # Target tokens
-        tokenized_target = self._tokenizer.tokenize(target_string)
-        tokenized_target.insert(0, Token(START_SYMBOL))
-        tokenized_target.append(Token(END_SYMBOL))
-        target_field = TextField(tokenized_target, self._token_indexers)
-        return Instance({"source_tokens": source_field, "target_tokens": target_field})
+        if target_string is not None:
+            tokenized_target = self._tokenizer.tokenize(target_string)
+            tokenized_target.insert(0, Token(START_SYMBOL))
+            tokenized_target.append(Token(END_SYMBOL))
+            target_field = TextField(tokenized_target, self._token_indexers)
+            return Instance({"source_tokens": source_field, "target_tokens": target_field})
+        else:
+            return Instance({"source_tokens": source_field})
 
 if __name__ == "__main__":
     reader = AlexaDatasetReader()

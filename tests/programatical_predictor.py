@@ -2,14 +2,22 @@
 import time
 import json
 
+from allennlp.common.util import import_submodules
 from allennlp.models.archival import load_archive
 from allennlp.predictors import Predictor
 
-model_path = 'fixtures/model.tar.gz'
-# model_path = 'training_log/model.tar.gz'
+# model_path = 'fixtures/model.tar.gz'
+model_path = 'training_log/model.tar.gz'
+
+# --include-package AllexaAllen
+package_name = 'AlexaAllen'
+import_submodules(package_name)
+
+# Load modules
 
 archive = load_archive(model_path)
-predictor = Predictor.from_archive(archive, 'simple_seq2seq')
+# predictor = Predictor.from_archive(archive, 'simple_seq2seq')
+predictor = Predictor.from_archive(archive, 'alexa_seq2seq')
 
 json_string = """ {"source": ""} """
 inputs = json.loads(json_string)
