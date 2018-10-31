@@ -35,8 +35,16 @@ class AlexaDatasetReader(DatasetReader):
             logger.info("Reading instances from lines in file at: %s", filepath)
             conversations = csv.reader(csvfile, delimiter=' ', quotechar='"')
             for conv in conversations:
-                for context, target in zip(conv[:-1], conv[1:]):
+                # 1 sentence -> 1 sentence
+                # for context, target in zip(conv[:-1], conv[1:]):
+                #     yield self.text_to_instance(context, target)
+
+                # Growing input sentence -> sentence
+                context = conv[0]
+                for target in conv[1:]:
                     yield self.text_to_instance(context, target)
+                    # add separator tokens. should do this in text_to_instance
+                    context += " @end@ @start@ "+target
 
     @overrides
     def text_to_instance(self, source_string: str, target_string: str = None) -> Instance:  # type: ignore

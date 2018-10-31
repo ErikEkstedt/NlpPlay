@@ -1,13 +1,12 @@
 # pylint: disable=no-self-use,invalid-name
 from allennlp.common.testing import AllenNlpTestCase
 from allennlp.common.util import ensure_list
-
-from AlexaAllen.datareaders.AlexaDataReader import AlexaDatasetReader
+from BotAlexa.datareaders.AlexaDataReader import AlexaDatasetReader
 
 class TestAlexaDataReader(AllenNlpTestCase):
     def test_read_from_file(self):
         reader = AlexaDatasetReader()
-        filepath = '/home/erik/NLP/NlpPlay/data/alexa/test.csv'
+        filepath = '/home/erik/NLP/NlpPlay/data/AlexaData/data/alexa_test.csv'
         instances = ensure_list(reader.read(filepath))
 
         instance1 = {"conversation": ['tell me a fact',
@@ -31,6 +30,20 @@ class TestAlexaDataReader(AllenNlpTestCase):
         # fields = instances[2].fields
         # assert [t.text for t in fields["conversation"].tokens] == instance1["conversation"]
 
+
 if __name__ == "__main__":
-    test = TestAlexaDataReader()
-    test.test_read_from_file()
+
+    reader = AlexaDatasetReader()
+    filepath = '/home/erik/NLP/NlpPlay/data/AlexaData/data/alexa_test.csv'
+
+    instances = reader.read(filepath)
+
+    for instance in instances:
+        fields = instance.fields
+        s_text = [t.text for t in fields['source_tokens'].tokens]
+        t_text = [t.text for t in fields['target_tokens'].tokens]
+        print('s: ', s_text)
+        print()
+        print('t: ', t_text)
+        input()
+
