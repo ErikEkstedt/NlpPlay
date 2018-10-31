@@ -145,9 +145,16 @@ def main(args):
 
     args = parser.parse_args(args)
 
+    mod = os.path.join(os.getcwd(), 'BotAlexa')
+    print(mod)
+    import_submodules(mod)
+
+    # print(os.system('pwd'))
     # Load modules
-    for package_name in args.include_package:
-        import_submodules(package_name)
+    # for package_name in args.include_package:
+    #     import_submodules(package_name)
+
+    ans = input('after load\n> ')
 
     archive = load_archive(args.archive_path, weights_file=args.weights_file, overrides=args.overrides)
     predictor = Predictor.from_archive(archive, args.predictor)

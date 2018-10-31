@@ -1,14 +1,15 @@
 import os
 import json
 
+
 allen_msg = """allennlp predict \
-    training_log/model.tar.gz \
+    last_training_log/model.tar.gz \
     fixtures/input_test.jsonl \
     --predictor alexa_seq2seq \
     --output-file /tmp/prediction.json \
     --silent \
     --cuda-device 0 \
-    --include-package AlexaAllen"""
+    --include-package BotAlexa"""
 
 
 os.system(allen_msg)

@@ -6,7 +6,8 @@
 #     --field-name source
 
 python service/server_simple.py \
-    --archive-path fixtures/model.tar.gz \
-    --predictor simple_seq2seq \
+    --archive-path last_training_log/model.tar.gz \
+    --include-package BotAlexa \
+    --predictor alexa_seq2seq \
     --title "Conversation" \
     --field-name source
